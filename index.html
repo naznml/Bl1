@@ -3617,19 +3617,22 @@
 
 <script>
   function showVariant(variantId, button) {
-    const variants = document.querySelectorAll('.variant');
-    const buttons = document.querySelectorAll('.tab-btn');
+    const targetVariant = document.getElementById(variantId);
+    if (!targetVariant) return;
 
-    variants.forEach(variant => {
+    document.querySelectorAll('.variant').forEach(variant => {
       variant.classList.remove('active');
     });
 
-    buttons.forEach(btn => {
+    document.querySelectorAll('.tab-btn').forEach(btn => {
       btn.classList.remove('active');
     });
 
-    document.getElementById(variantId).classList.add('active');
-    button.classList.add('active');
+    targetVariant.classList.add('active');
+
+    if (button) {
+      button.classList.add('active');
+    }
 
     window.scrollTo({
       top: 0,
@@ -3639,14 +3642,17 @@
 
   function checkVariant(variantId) {
     const variant = document.getElementById(variantId);
+    if (!variant) return;
+
     const questions = variant.querySelectorAll('.question');
     const resultBox = variant.querySelector('.result-box');
+    if (!resultBox) return;
 
     let score = 0;
 
-    questions.forEach((question) => {
+    questions.forEach(question => {
       const correct = question.dataset.correct;
-      const explanationText = question.dataset.explanation;
+      const explanationText = question.dataset.explanation || '';
       const options = question.querySelectorAll('.option');
       const selected = question.querySelector('input[type="radio"]:checked');
       const explanationBox = question.querySelector('.explanation');
@@ -3656,7 +3662,8 @@
       });
 
       options.forEach(option => {
-        const input = option.querySelector('input');
+        const input = option.querySelector('input[type="radio"]');
+        if (!input) return;
 
         if (input.value === correct) {
           option.classList.add('correct');
@@ -3667,13 +3674,18 @@
         }
       });
 
+      if (!explanationBox) return;
+
       if (selected && selected.value === correct) {
         score++;
         explanationBox.className = 'explanation good';
         explanationBox.innerHTML = '<strong>Дұрыс.</strong> ' + explanationText;
-      } else {
+      } else if (selected) {
         explanationBox.className = 'explanation bad';
         explanationBox.innerHTML = '<strong>Қате.</strong> Дұрыс жауап жасыл түспен көрсетілді. ' + explanationText;
+      } else {
+        explanationBox.className = 'explanation bad';
+        explanationBox.innerHTML = '<strong>Жауап таңдалмады.</strong> Дұрыс жауап жасыл түспен көрсетілді. ' + explanationText;
       }
 
       explanationBox.style.display = 'block';
