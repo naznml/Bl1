@@ -249,6 +249,91 @@
       }
     }
   </style>
+<script type="text/javascript">
+  function showVariant(variantId, button) {
+    const targetVariant = document.getElementById(variantId);
+    if (!targetVariant) return;
+
+    document.querySelectorAll('.variant').forEach(variant => {
+      variant.classList.remove('active');
+    });
+
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.classList.remove('active');
+    });
+
+    targetVariant.classList.add('active');
+
+    if (button) {
+      button.classList.add('active');
+    }
+
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  }
+
+  function checkVariant(variantId) {
+    const variant = document.getElementById(variantId);
+    if (!variant) return;
+
+    const questions = variant.querySelectorAll('.question');
+    const resultBox = variant.querySelector('.result-box');
+    if (!resultBox) return;
+
+    let score = 0;
+
+    questions.forEach(question => {
+      const correct = question.dataset.correct;
+      const explanationText = question.dataset.explanation || '';
+      const options = question.querySelectorAll('.option');
+      const selected = question.querySelector('input[type="radio"]:checked');
+      const explanationBox = question.querySelector('.explanation');
+
+      options.forEach(option => {
+        option.classList.remove('correct', 'wrong');
+      });
+
+      options.forEach(option => {
+        const input = option.querySelector('input[type="radio"]');
+        if (!input) return;
+
+        if (input.value === correct) {
+          option.classList.add('correct');
+        }
+
+        if (selected && input.checked && input.value !== correct) {
+          option.classList.add('wrong');
+        }
+      });
+
+      if (!explanationBox) return;
+
+      if (selected && selected.value === correct) {
+        score++;
+        explanationBox.className = 'explanation good';
+        explanationBox.innerHTML = '<strong>Дұрыс.</strong> ' + explanationText;
+      } else if (selected) {
+        explanationBox.className = 'explanation bad';
+        explanationBox.innerHTML = '<strong>Қате.</strong> Дұрыс жауап жасыл түспен көрсетілді. ' + explanationText;
+      } else {
+        explanationBox.className = 'explanation bad';
+        explanationBox.innerHTML = '<strong>Жауап таңдалмады.</strong> Дұрыс жауап жасыл түспен көрсетілді. ' + explanationText;
+      }
+
+      explanationBox.style.display = 'block';
+    });
+
+    resultBox.style.display = 'block';
+    resultBox.innerHTML = 'Сіздің нәтижеңіз: ' + score + ' / ' + questions.length;
+
+    resultBox.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center'
+    });
+  }
+</script>
 </head>
 
 <body>
@@ -1750,7 +1835,8 @@
     <button class="check-btn" onclick="checkVariant('variant4')">Нәтижені көрсету</button>
     <div class="result-box"></div>
   </section>
-    <section id="variant5" class="variant">
+
+   <section id="variant5" class="variant">
     <h2>5-нұсқа</h2>
     <p class="variant-note">Бір дұрыс жауапты таңдаңыз. Барлығы: 30 сұрақ.</p>
 
@@ -3615,93 +3701,5 @@
   © @elnazm_ln
 </footer>
 
-<script>
-  function showVariant(variantId, button) {
-    const targetVariant = document.getElementById(variantId);
-    if (!targetVariant) return;
-
-    document.querySelectorAll('.variant').forEach(variant => {
-      variant.classList.remove('active');
-    });
-
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-      btn.classList.remove('active');
-    });
-
-    targetVariant.classList.add('active');
-
-    if (button) {
-      button.classList.add('active');
-    }
-
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  }
-
-  function checkVariant(variantId) {
-    const variant = document.getElementById(variantId);
-    if (!variant) return;
-
-    const questions = variant.querySelectorAll('.question');
-    const resultBox = variant.querySelector('.result-box');
-    if (!resultBox) return;
-
-    let score = 0;
-
-    questions.forEach(question => {
-      const correct = question.dataset.correct;
-      const explanationText = question.dataset.explanation || '';
-      const options = question.querySelectorAll('.option');
-      const selected = question.querySelector('input[type="radio"]:checked');
-      const explanationBox = question.querySelector('.explanation');
-
-      options.forEach(option => {
-        option.classList.remove('correct', 'wrong');
-      });
-
-      options.forEach(option => {
-        const input = option.querySelector('input[type="radio"]');
-        if (!input) return;
-
-        if (input.value === correct) {
-          option.classList.add('correct');
-        }
-
-        if (selected && input.checked && input.value !== correct) {
-          option.classList.add('wrong');
-        }
-      });
-
-      if (!explanationBox) return;
-
-      if (selected && selected.value === correct) {
-        score++;
-        explanationBox.className = 'explanation good';
-        explanationBox.innerHTML = '<strong>Дұрыс.</strong> ' + explanationText;
-      } else if (selected) {
-        explanationBox.className = 'explanation bad';
-        explanationBox.innerHTML = '<strong>Қате.</strong> Дұрыс жауап жасыл түспен көрсетілді. ' + explanationText;
-      } else {
-        explanationBox.className = 'explanation bad';
-        explanationBox.innerHTML = '<strong>Жауап таңдалмады.</strong> Дұрыс жауап жасыл түспен көрсетілді. ' + explanationText;
-      }
-
-      explanationBox.style.display = 'block';
-    });
-
-    resultBox.style.display = 'block';
-    resultBox.innerHTML = 'Сіздің нәтижеңіз: ' + score + ' / ' + questions.length;
-
-    resultBox.scrollIntoView({
-      behavior: 'smooth',
-      block: 'center'
-    });
-  }
-</script>
-
 </body>
 </html>
-  
-  
